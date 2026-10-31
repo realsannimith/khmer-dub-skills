@@ -18,21 +18,64 @@ The full instructions the agent follows are in [SKILL.md](SKILL.md).
 
 ## Install
 
-One line, for the agent you use:
+Copy the line for the agent you use and paste it into your terminal.
 
-| Agent | Command |
-|---|---|
-| Claude Code | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh` |
-| Codex | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- codex` |
-| Cursor | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- cursor` |
-| Gemini CLI | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- gemini` |
-| GitHub Copilot | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- copilot` |
-| OpenCode | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- opencode` |
-| Windsurf | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- windsurf` |
-| Cline, Warp, Zed, other agents that read `~/.agents/skills` | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- agents` |
+**Claude Code**
 
-Several at once: `… | sh -s -- claude codex cursor`. The first agent gets the checkout and the others a link to it,
-so one update covers them all. Run the same command again to update.
+```bash
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh
+```
+
+**Codex**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- codex
+```
+
+**Cursor**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- cursor
+```
+
+**Gemini CLI**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- gemini
+```
+
+**GitHub Copilot**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- copilot
+```
+
+**OpenCode**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- opencode
+```
+
+**Windsurf**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- windsurf
+```
+
+**Cline, Warp, Zed and other agents that read `~/.agents/skills`**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- agents
+```
+
+**Claude Code and Codex together**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- claude codex
+```
+
+List as many agents as you like. The first one gets the checkout and the others a link to it, so one update covers
+them all. Run the same command again to update.
 
 The script clones the skill into the agent's skills folder and runs `scripts/setup.sh`. Then ask your agent something
 like "dub this video into Khmer: <link or file>".
