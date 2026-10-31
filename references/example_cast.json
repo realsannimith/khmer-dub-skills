@@ -1,0 +1,21 @@
+{
+ "note": "The Emperor's Gossip Girl (TikTok short drama). Same voices for every episode.",
+ "voices": {
+  "heroine": {
+   "voice": "km-KH-SreymomNeural",
+   "pitch": "+8Hz"
+  },
+  "sister": {
+   "voice": "km-KH-SreymomNeural",
+   "pitch": "-6Hz"
+  },
+  "eunuch": {
+   "voice": "km-KH-PisethNeural",
+   "pitch": "+25Hz"
+  },
+  "emperor": {
+   "voice": "km-KH-PisethNeural",
+   "pitch": "-8Hz"
+  }
+ }
+}
