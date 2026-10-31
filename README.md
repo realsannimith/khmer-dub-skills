@@ -14,24 +14,42 @@ What it does:
   logo.
 - Transcribes Khmer speech (Khmer Whisper on the GPU) into a proofread `.km.srt` and `.km.txt`.
 
-The full instructions Claude follows are in [SKILL.md](SKILL.md).
+The full instructions the agent follows are in [SKILL.md](SKILL.md).
 
 ## Install
 
+One line, for the agent you use:
+
+| Agent | Command |
+|---|---|
+| Claude Code | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh` |
+| Codex | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- codex` |
+| Cursor | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- cursor` |
+| Gemini CLI | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- gemini` |
+| GitHub Copilot | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- copilot` |
+| OpenCode | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- opencode` |
+| Windsurf | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- windsurf` |
+| Cline, Warp, Zed, other agents that read `~/.agents/skills` | `curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh \| sh -s -- agents` |
+
+Several at once: `… | sh -s -- claude codex cursor`. The first agent gets the checkout and the others a link to it,
+so one update covers them all. Run the same command again to update.
+
+The script clones the skill into the agent's skills folder and runs `scripts/setup.sh`. Then ask your agent something
+like "dub this video into Khmer: <link or file>".
+
+With the open [skills CLI](https://github.com/vercel-labs/skills) (Node.js 22.20+) instead:
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh
+npx skills add realsannimith/khmer-dub-skill -g -a codex      # or -a claude-code, cursor, gemini-cli, …
 ```
 
-It clones the skill into `~/.claude/skills/khmer-dub` (or updates it) and runs `scripts/setup.sh`. Run it again
-later to update.
-
-Then ask Claude Code something like "dub this episode into Khmer: <link or file>".
+It only copies the files; the agent runs `scripts/setup.sh` the first time it uses the skill.
 
 Needs [uv](https://docs.astral.sh/uv/) and ffmpeg, on macOS or Linux. `setup.sh` makes a small Python environment
 inside the skill (edge-tts, numpy, soundfile, Pillow) and downloads the Kantumruy Pro font from Google Fonts. That is
 enough to dub.
 
-The other steps need local AI engines. Claude installs them the first time a step needs them, after asking:
+The other steps need local AI engines. The agent installs them the first time a step needs them, after asking:
 
 | Command | Installs | Used for |
 |---|---|---|

@@ -70,7 +70,7 @@ copy `config.example.env` to `config.env` and fill it in.
 
 ## 1. Download the episode
 
-Download into a fresh, empty folder in the scratchpad and check it. Then move it to
+Download into a fresh, empty temporary folder (the scratchpad, if your agent has one) and check it. Then move it to
 `<Movie>/Episode_NN/<Movie>_Episode_NN.<ext>` (`mkdir -p` the folder first).
 
 - **Anything yt-dlp reads** (YouTube, Facebook reels, ordinary TikTok videos…): run `yt-dlp -F <url>` to see the qualities,
@@ -81,9 +81,9 @@ Download into a fresh, empty folder in the scratchpad and check it. Then move it
   session (curl gets 403, even with fresh cookies), and the page's security policy blocks sending data out with
   fetch, so the browser fetches the videos itself and hands them over in a form post:
   1. `python3 SKILL_DIR/scripts/receive.py <scratchpad>/inbox` in the background (listens on 127.0.0.1:8765).
-  2. Open any episode page in the built-in browser (`navigate`). The drama's English title is in the page (the
+  2. Open any episode page in a browser your agent can drive (the built-in browser in Claude Code). The drama's English title is in the page (the
      episode `desc`); name the movie folder after it.
-  3. Paste `scripts/tiktok_batch.js` into `javascript_tool` with `FIRST`, `LAST` (about 20 episodes, about 300 MB, per
+  3. Run `scripts/tiktok_batch.js` in the page with the browser's JavaScript tool (`javascript_tool` in Claude Code), with `FIRST`, `LAST` (about 20 episodes, about 300 MB, per
      batch) and `NAME` set. It returns at once; the page fetches the batch (about a minute), posts it and reloads.
      Wait until the receiver's output says `saved … <NAME>_Episode_<LAST>.mp4`, then run the next range.
   4. After each batch: `python3 SKILL_DIR/scripts/file_episodes.py <scratchpad>/inbox <Movie>`. It moves each video into
@@ -99,7 +99,7 @@ Download into a fresh, empty folder in the scratchpad and check it. Then move it
   Its captions are usually better than TikTok's auto-captions. In the script's `note`, say the lines came from Whisper.
   (The Khmer Whisper used in section 7 can't hear Chinese.)
 - **hongguoduanju.com** (红果短剧). `/player/<seriesID>` alone gives yt-dlp only a 10 s preview; throw such a file away.
-  1. Open the full episode at `/player/<seriesID>/<episodeID>` in the built-in browser.
+  1. Open the full episode at `/player/<seriesID>/<episodeID>` in a browser your agent can drive.
   2. Read `document.querySelector('video').currentSrc` (or the `performance.getEntriesByType('resource')` entries with
      `mime_type=video_mp4`).
   3. curl it with `-e "https://hongguoduanju.com/"`.
@@ -213,7 +213,7 @@ Done one by one, 80 episodes take days of tool calls. Instead:
 2. **Split all in the background** while you work on the scripts. Each episode takes about a minute on the GPU:
    `sh SKILL_DIR/scripts/dub_series.sh <Movie> split`.
 3. **Write `cast.json` and episode 1's script yourself**, and dub episode 1 to hear the voices.
-4. **Write a translation guide**, then have helpers write the scripts in parallel. Put the guide in the scratchpad. It
+4. **Write a translation guide**, then have helpers write the scripts in parallel. Put the guide in a temporary folder. It
    holds:
    - the output format and the cast keys
    - the register rules and the names
@@ -221,7 +221,7 @@ Done one by one, 80 episodes take days of tool calls. Instead:
    - a story summary of the episodes you read
    - a one-line check command
 
-   Give each helper (a subagent) about 10 episodes, with fewer than 10 helpers in all. Tell each one to skim the captions
+   Give each helper (a subagent, if your agent has them; otherwise write them yourself) about 10 episodes, with fewer than 10 helpers in all. Tell each one to skim the captions
    of the episodes before its range for the story. Helpers write only `work/khmer_script.json`: no `cast.json` edits, no
    dubbing. They report new recurring characters, and you add those to `cast.json`.
 5. **Make the names consistent before dubbing.** Helpers spell new names differently (one series had three spellings
