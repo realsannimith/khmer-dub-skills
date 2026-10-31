@@ -1,7 +1,7 @@
 """Khmer speech -> a draft of timed Khmer lines, phrase by phrase.
 
-Usage (needs torch + transformers: run with the ~/ai-engines Python):
-  ~/ai-engines/voxcpm/.venv/bin/python -I transcribe_km.py <Episode_dir>/<Name>.mp4
+Usage (needs torch + transformers, the 'ai' environment):
+  sh run.sh ai transcribe_km.py <Episode_dir>/<Name>.mp4
 
 Reads <Episode_dir>/work/voice.wav when separate.sh made it (best: no music
 under the words), else the video's own sound. Splits on silences into phrases
@@ -14,22 +14,19 @@ with a repetition penalty, and any still garbled get "check": true. The
 draft always needs proofreading (make_srt.py turns the proofread copy into
 the final .km.srt / .km.txt).
 
-The model is already on this Mac (Hugging Face cache, shared with the kattor
-skill); HF_HUB_OFFLINE keeps this script from ever downloading it again.
+The model (about 1.6 GB) is downloaded into the Hugging Face cache on first
+use; set HF_HUB_OFFLINE=1 (config.env) to never download it.
 """
 import json
-import os
 import re
 import subprocess
 import sys
 from pathlib import Path
 
-os.environ.setdefault("HF_HUB_OFFLINE", "1")
-
-import librosa  # noqa: E402
-import torch  # noqa: E402
-from transformers import WhisperForConditionalGeneration, WhisperProcessor  # noqa: E402
-from transformers.utils import logging  # noqa: E402
+import librosa
+import torch
+from transformers import WhisperForConditionalGeneration, WhisperProcessor
+from transformers.utils import logging
 
 logging.set_verbosity_error()  # else a max_length notice per phrase
 

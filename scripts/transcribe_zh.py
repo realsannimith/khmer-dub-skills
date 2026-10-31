@@ -1,20 +1,18 @@
 """Chinese captions (<Name>.zh.vtt) for episodes that came without subtitles.
 
-Usage (the mlx-whisper environment in ~/ai-engines; Apple GPU):
-  ~/ai-engines/mlx-whisper/.venv/bin/python -I transcribe_zh.py <Episode_dir>/<Name>.mp4 [more.mp4 …] [--prompt "names…"]
+Usage (the 'mlx' environment: mlx-whisper on the Apple GPU):
+  sh run.sh mlx transcribe_zh.py <Episode_dir>/<Name>.mp4 [more.mp4 …] [--prompt "names…"]
 
 Transcribes work/voice.wav (from separate.sh; the video's own sound if it isn't there) with
-whisper-large-v3-turbo (mlx-community weights, already in the Hugging Face cache; HF_HUB_OFFLINE
-keeps it from downloading anything) and writes <Name>.zh.vtt beside the video, one cue per
+whisper-large-v3-turbo (mlx-community weights, downloaded into the Hugging Face cache on first use;
+HF_HUB_OFFLINE=1 in config.env stops any download) and writes <Name>.zh.vtt beside the video, one cue per
 phrase. About 20 s per 2-minute episode. --prompt gives Whisper the drama's names and
 words (e.g. "李承乾、李世民、太子殿下、陛下") so it spells them right.
 """
-import os
 import sys
 from pathlib import Path
 
-os.environ["HF_HUB_OFFLINE"] = "1"
-import mlx_whisper  # noqa: E402
+import mlx_whisper
 
 MODEL = "mlx-community/whisper-large-v3-turbo"
 

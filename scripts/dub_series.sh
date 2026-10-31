@@ -19,7 +19,6 @@ if [ "${JOBS:-1}" -gt 1 ]; then
   i=0; while [ $i -lt "$JOBS" ]; do JOBS=1 sh "$SELF" "$MOVIE" "$WHAT" & i=$((i + 1)); sleep 2; done
   wait; exit 0
 fi
-PY="$SKILL/.venv/bin/python"
 cd "$MOVIE" || exit 1
 NAME="$(basename "$(pwd)")"
 TRASH="$HOME/.Trash/${NAME}_khmer_lines"
@@ -35,10 +34,11 @@ for d in Episode_*/; do
   if [ "$WHAT" != split ] && [ -f "$ep/work/khmer_script.json" ] && [ -f "$ep/work/background_music.wav" ]; then
     out="$ep/${NAME}_${ep}_Khmer.mp4"
     if [ ! -f "$out" ] || [ "$ep/work/khmer_script.json" -nt "$out" ] || { [ -f cast.json ] && [ cast.json -nt "$out" ]; }; then
-      if log=$("$PY" "$SKILL/scripts/khmer_dub.py" "$video" 2>&1); then
+      if log=$(sh "$SKILL/scripts/run.sh" tts khmer_dub.py "$video" 2>&1); then
         over=$(printf '%s\n' "$log" | grep -c "OVER by")
         if [ "$over" -gt 0 ]; then echo "$ep dubbed ($over lines OVER: shorten them)"; else echo "$ep dubbed"; fi
-        mkdir -p "$TRASH" && mv "$ep/work/khmer_lines" "$TRASH/$ep.$(date +%s)" 2>/dev/null
+        if [ -d "$HOME/.Trash" ]; then mkdir -p "$TRASH" && mv "$ep/work/khmer_lines" "$TRASH/$ep.$(date +%s)" 2>/dev/null
+        else rm -rf "$ep/work/khmer_lines"; fi  # no Trash (Linux): per-line audio is remade on the next dub
         done=$((done + 1))
       else
         rm -f "$out"; echo "$ep DUB FAILED: $(printf '%s\n' "$log" | tail -1)"; failed="$failed $ep"

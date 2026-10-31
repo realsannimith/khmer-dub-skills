@@ -1,6 +1,6 @@
 ---
 name: khmer-dub
-description: Dub a short drama, movie series or any video into Khmer (ខ្មែរ) with free Microsoft Edge TTS, and make Khmer subtitles from Khmer speech — download the episode (TikTok short-drama pages, hongguoduanju.com, Facebook, YouTube, anything yt-dlp reads) into one folder per movie with every episode inside it, split the original voice from the background music with Demucs, translate the subtitles (Chinese, Vietnamese, English…) into natural spoken Khmer, give every character one voice for the whole series, fit each line into its slot, mix it over the ducked music at -14 LUFS and open the finished video with a Khmer .srt. For a video already spoken in Khmer it transcribes the speech on the GPU (Khmer Whisper), proofreads it and writes a timed .km.srt and a .km.txt transcript. Use it whenever someone asks to dub, voice over, "turn the voice into Khmer", make a Khmer version of a drama/episode/clip, separate voice and music, extract the text or subtitles from a video's audio, transcribe Khmer speech, or download a TikTok short-drama / 红果短剧 episode or a reel to work on — even if they only paste a link and say "start working on it". Edge TTS only: never VoxCPM, OmniVoice or any local voice model.
+description: Dub a short drama, movie series or any video into Khmer (ខ្មែរ) with free Microsoft Edge TTS, and make Khmer subtitles from Khmer speech — download the episode (TikTok short-drama pages, hongguoduanju.com, Facebook, YouTube, anything yt-dlp reads) into one folder per movie with every episode inside it, split the original voice from the background music with Demucs, translate the subtitles (Chinese, Vietnamese, English…) into natural spoken Khmer, give every character one voice for the whole series, fit each line into its slot, mix it over the ducked music at -14 LUFS and open the finished video with a Khmer .srt. For a video already spoken in Khmer it transcribes the speech on the GPU (Khmer Whisper), proofreads it and writes a timed .km.srt and a .km.txt transcript. Use it whenever someone asks to dub, voice over, "turn the voice into Khmer", make a Khmer version of a drama/episode/clip, separate voice and music, extract the text or subtitles from a video's audio, transcribe Khmer speech, or download a TikTok short-drama / 红果短剧 episode or a reel to work on — even if they only paste a link and say "start working on it". Edge TTS only: no local voice model.
 ---
 
 # Khmer dub (Edge TTS) and Khmer subtitles
@@ -14,12 +14,17 @@ Two jobs, one project layout:
 - **Subtitles from Khmer speech**: makes `<Name>.km.srt` + `<Name>.km.txt` for a video that is already spoken in Khmer.
   See section 7.
 
-`SKILL_DIR` is the folder of this file. Scripts are in `SKILL_DIR/scripts`. `PY=SKILL_DIR/.venv/bin/python` (edge-tts),
-`AI=~/ai-engines/voxcpm/.venv/bin/python` (borrowed for torch, Demucs, librosa and Whisper; no voice model runs).
+`SKILL_DIR` is the folder of this file. Scripts are in `SKILL_DIR/scripts`. Python scripts run through
+`sh SKILL_DIR/scripts/run.sh <env> <script.py> …`, which picks the Python environment:
 
-**Edge TTS only.** Do not use VoxCPM, OmniVoice or any local voice model for this skill, even though some are installed
-in `~/ai-engines`. Only two engines from there are used, and both are already on this Mac: Demucs (voice/music split) and
-the Khmer Whisper in the Hugging Face cache. Never download or reinstall either (see `~/ai-engines/README.md`).
+- `tts`: edge-tts, numpy, soundfile, Pillow (dubbing, covered subtitles)
+- `ai`: torch, Demucs, librosa, transformers (voice/music split, pitch, Khmer Whisper)
+- `mlx`: mlx-whisper (Chinese captions on Apple Silicon)
+
+`combine_parts.py`, `file_episodes.py`, `receive.py` and `make_srt.py` need only the standard library: `python3` runs them.
+
+**Edge TTS only.** Do not swap in a local voice model (VoxCPM, OmniVoice, …), even if one is installed. The only local
+models are Demucs (voice/music split) and Whisper (transcription).
 
 ## Project layout: one folder per movie
 
@@ -50,12 +55,18 @@ Clips/<Name>/                          a one-off video (a reel, a single clip): 
 
 ## 0. Setup (once)
 
+First look for `SKILL_DIR/config.env`. If it exists, it points the environments at engines already installed on this
+machine: use them, and never run `setup.sh --ai` / `--mlx` or download those models again. Otherwise:
+
 ```bash
-sh SKILL_DIR/scripts/setup.sh
+sh SKILL_DIR/scripts/setup.sh         # .venv: edge-tts, numpy, soundfile, Pillow + the Kantumruy Pro font (~60 MB)
+sh SKILL_DIR/scripts/setup.sh --ai    # .venv-ai: torch, Demucs, librosa, transformers (~2 GB), for steps 2-3 and 7
+sh SKILL_DIR/scripts/setup.sh --mlx   # .venv-mlx: mlx-whisper, only for episodes with no subtitles (Apple Silicon)
 ```
 
-Makes `SKILL_DIR/.venv` with edge-tts, numpy and soundfile (about 30 MB, no model) and lists the Khmer voices. It needs `uv`
-and `ffmpeg`, which are both on this Mac.
+They need `uv` and `ffmpeg`. Run `--ai` and `--mlx` only when a step needs them, and tell the user the download size
+first. Demucs (~320 MB) and the Whisper models (~1.6 GB each) download on first use. To reuse engines installed elsewhere,
+copy `config.example.env` to `config.env` and fill it in.
 
 ## 1. Download the episode
 
@@ -81,9 +92,9 @@ Download into a fresh, empty folder in the scratchpad and check it. Then move it
   5. When all are in: `pkill -f receive.py`.
 
   Some episodes have no captions at all (`NO SUBTITLES`). Split them (step 2), then make Chinese captions with the
-  multilingual Whisper (installed in `~/ai-engines/mlx-whisper`; never reinstall it). This takes about 20 s per episode:
+  multilingual Whisper (the `mlx` environment). This takes about 20 s per episode:
   ```bash
-  ~/ai-engines/mlx-whisper/.venv/bin/python -I SKILL_DIR/scripts/transcribe_zh.py <Episode_dir>/<Name>.mp4 --prompt "李承乾、李世民、陛下"
+  sh SKILL_DIR/scripts/run.sh mlx transcribe_zh.py <Episode_dir>/<Name>.mp4 --prompt "<the drama's names, in Chinese>"
   ```
   Its captions are usually better than TikTok's auto-captions. In the script's `note`, say the lines came from Whisper.
   (The Khmer Whisper used in section 7 can't hear Chinese.)
@@ -103,7 +114,8 @@ Confirm with `ffprobe -v error -show_entries format=duration:stream=codec_name,w
 sh SKILL_DIR/scripts/separate.sh <Movie>/Episode_NN/<Name>.mp4
 ```
 
-Writes `work/voice.wav` and `work/background_music.wav` (44.1 kHz) in a few seconds on the GPU. Under loud lines the
+Writes `work/voice.wav` and `work/background_music.wav` (44.1 kHz): a few seconds on a GPU (Apple or CUDA), longer on a
+CPU. Under loud lines the
 background keeps a faint trace of the original voice; ducking hides most of it.
 
 ## 3. Get the lines and who says them
@@ -111,7 +123,7 @@ background keeps a faint trace of the original voice; ducking hides most of it.
 Use the platform's subtitles when there are any (`.vtt`/`.srt`). Then run:
 
 ```bash
-$AI -I SKILL_DIR/scripts/cues.py <Episode_dir>/<Name>.<lang>.vtt <Episode_dir>/work/voice.wav
+sh SKILL_DIR/scripts/run.sh ai cues.py <Episode_dir>/<Name>.<lang>.vtt <Episode_dir>/work/voice.wav
 ```
 
 It prints each line with the pitch of the original voice, and any stretch of speech that has no subtitle. Use that and the
@@ -175,7 +187,7 @@ Translate into natural spoken Khmer, not word-for-word.
 ## 5. Dub and build the video
 
 ```bash
-$PY SKILL_DIR/scripts/khmer_dub.py <Movie>/Episode_NN/<Name>.mp4
+sh SKILL_DIR/scripts/run.sh tts khmer_dub.py <Movie>/Episode_NN/<Name>.mp4
 ```
 
 It writes `<Name>_Khmer.mp4` and `.srt` beside the original.
@@ -224,20 +236,19 @@ Done one by one, 80 episodes take days of tool calls. Instead:
    loudness on 3–4 episodes.
 8. **Optional extras:**
    - Hide subtitles burned into the picture and draw the Khmer ones over them:
-     `~/.cache/khmer-video-editor/venv/bin/python SKILL_DIR/scripts/cover_subs.py <Name>_Khmer.mp4 --band top:bottom`.
+     `sh SKILL_DIR/scripts/run.sh tts cover_subs.py <Name>_Khmer.mp4 --band top:bottom`.
      It blurs that band and writes `<Name>_Khmer_sub.mp4`, about twice the size because the picture is re-encoded.
      Show the user one episode before doing them all.
    - Join episodes into longer videos: `python3 SKILL_DIR/scripts/combine_parts.py <Movie> --min 420 --max 480`.
      It writes `<Movie>/Parts/01.mp4, 02.mp4 …`, their subtitles in `<Movie>/Parts/Subtitles/01.srt …`, and
-     `Parts/parts.txt` (which episodes each part holds). That is the layout the user uploads from. It doesn't re-encode
+     `Parts/parts.txt` (which episodes each part holds). It doesn't re-encode
      and never cuts an episode. `--long-names` writes `<Movie>_Part_PP_EpAA-BB.mp4` with its `.srt` beside it instead.
      Add `--suffix _Khmer_sub` to join the covered versions. Each episode's first seconds repeat the end of the one
      before; they stay in.
      `--logo <transparent.png>` puts a channel logo in the top-right corner, at 90 % opacity and 154 px wide. The video is
      re-encoded with x265, about 1.5 minutes per part. To make a logo that sits on black transparent, set alpha to
      the brightest channel and un-premultiply, then add a soft shadow so white text still reads on bright scenes.
-     The user's SN Movie logo is in `~/Desktop/mmo-agentic/assets/SN_Movie_logo_shadow.png`. The prompts that made it
-     (and the MMO Agentic logos) are in `~/Desktop/mmo-agentic/branding/`.
+     Ask the user for their logo; the skill has none of its own.
 
 ## 6. Check and hand over
 
@@ -260,17 +271,17 @@ every episode), then run step 5 again.
 ## 7. Khmer subtitles from Khmer speech
 
 For a video already spoken in Khmer (a reel, a vlog, an explainer) the user wants the words as text or subtitles. No TTS is
-involved, and the Whisper model runs offline on the GPU.
+involved; the Khmer Whisper runs locally (the `ai` environment).
 
 1. **Check for existing subtitles.** Look for a subtitle track (`ffprobe -show_streams`, `yt-dlp --list-subs`) and for
    text burned into the picture: look at 3–4 frames, `ffmpeg -ss <t> -i <video> -frames:v 1 -update 1 f.jpg`. If there is
    one, use it rather than transcribing.
 2. **Clean voice:** `sh SKILL_DIR/scripts/separate.sh <Episode_dir>/<Name>.mp4`. With music under the words, Whisper does
    much worse.
-3. **Draft:** `$AI -I SKILL_DIR/scripts/transcribe_km.py <Episode_dir>/<Name>.mp4`.
+3. **Draft:** `sh SKILL_DIR/scripts/run.sh ai transcribe_km.py <Episode_dir>/<Name>.mp4`.
    - It writes `work/draft.json` (and `draft.srt`): one entry per phrase, up to 6 s each.
    - Phrases still garbled after a retry are marked `"check": true`.
-   - About 7 minutes for a 5-minute video, so run it in the background.
+   - About 7 minutes for a 5-minute video on an Apple GPU, so run it in the background.
 4. **Proofread into `work/subtitles.json`** (same shape: `[{ "start", "end", "text" }]`). This step decides the quality, so
    do it by hand, line by line:
    - Join phrases into whole sentences (keep the first `start` and the last `end`).

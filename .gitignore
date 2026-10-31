@@ -1,4 +1,8 @@
 .venv/
+.venv-ai/
+.venv-mlx/
+fonts/
+config.env
 __pycache__/
 *.pyc
 .DS_Store

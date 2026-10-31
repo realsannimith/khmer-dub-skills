@@ -1,10 +1,7 @@
 """Dub a video into Khmer with Microsoft Edge TTS (free, online).
 
-Usage:
-  python khmer_dub.py <Movie>/Episode_NN/<Name>.mp4 [out.mp4]
-
-Run it with the skill's own environment (scripts/setup.sh makes it):
-  ~/.claude/skills/khmer-dub/.venv/bin/python khmer_dub.py ...
+Usage (the skill's 'tts' environment; scripts/setup.sh makes it):
+  sh run.sh tts khmer_dub.py <Movie>/Episode_NN/<Name>.mp4 [out.mp4]
 
 work/ beside the video holds background_music.wav (44.1 kHz, from
 separate.sh) and khmer_script.json:

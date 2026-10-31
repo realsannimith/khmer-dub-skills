@@ -2,8 +2,8 @@
 speech the subtitles miss. Use it to decide who says each line (pitch: men
 roughly 85-160 Hz, women 180-400 Hz) and whether a line is missing.
 
-Usage (needs librosa: run with the ~/ai-engines Python):
-  ~/ai-engines/voxcpm/.venv/bin/python -I cues.py <subs.vtt|.srt> <stems_dir>/voice.wav
+Usage (needs librosa, the 'ai' environment):
+  sh run.sh ai cues.py <subs.vtt|.srt> <stems_dir>/voice.wav
 
 Pitch 0 means the line had too little clear voice to measure (whisper,
 shouting over music, or a deep voice under noise): judge it from the story.

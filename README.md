@@ -23,22 +23,27 @@ git clone https://github.com/realsannimith/khmer-dub-skill.git ~/.claude/skills/
 sh ~/.claude/skills/khmer-dub/scripts/setup.sh
 ```
 
-`setup.sh` makes a small Python environment inside the skill with edge-tts, numpy and soundfile. It needs
-[uv](https://docs.astral.sh/uv/) and ffmpeg.
+Then ask Claude Code something like "dub this episode into Khmer: <link or file>".
 
-## Requirements
+Needs [uv](https://docs.astral.sh/uv/) and ffmpeg, on macOS or Linux. `setup.sh` makes a small Python environment
+inside the skill (edge-tts, numpy, soundfile, Pillow) and downloads the Kantumruy Pro font from Google Fonts. That is
+enough to dub.
 
-The dub itself needs only Edge TTS (online, free, no key) and ffmpeg. The other steps expect engines that are already
-installed on the author's Mac, and the scripts look for them in these places:
+The other steps need local AI engines. Claude installs them the first time a step needs them, after asking:
 
-| Step | Engine | Expected at |
+| Command | Installs | Used for |
 |---|---|---|
-| Voice/music split | Demucs `htdemucs_ft` | `~/ai-engines/demucs`, run with the torch environment `~/ai-engines/voxcpm/.venv` |
-| Khmer transcription | `metythorn/whisper-large-v3-turbo` | Hugging Face cache, same torch environment |
-| Chinese captions when an episode has none | `mlx-community/whisper-large-v3-turbo` | `~/ai-engines/mlx-whisper/.venv` (Apple Silicon) |
-| Covering burned-in subtitles | Pillow with Raqm (Khmer text shaping) | `~/.cache/khmer-video-editor/venv` |
+| `setup.sh --ai` | torch, Demucs, librosa, transformers (about 2 GB) | splitting voice and music, telling speakers apart by pitch, transcribing Khmer speech |
+| `setup.sh --mlx` | mlx-whisper (Apple Silicon only) | Chinese captions for episodes that have no subtitles |
 
-On another machine, install these yourself and change the paths at the top of the scripts.
+The models download on first use: Demucs `htdemucs_ft` (about 320 MB), the Khmer Whisper
+`metythorn/whisper-large-v3-turbo`, and `mlx-community/whisper-large-v3-turbo`. A GPU (Apple Silicon or CUDA) makes
+them much faster.
+
+### Already have these engines?
+
+Copy `config.example.env` to `config.env` and point it at your Python environments, model folders and font. The
+skill then uses them and never installs or downloads its own. `config.env` is not committed.
 
 ## Voices
 

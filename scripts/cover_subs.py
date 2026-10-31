@@ -1,16 +1,19 @@
 """Hide subtitles burned into the picture and burn the Khmer ones in their place.
 
-Usage (needs Pillow with Raqm for Khmer shaping: the kattor skill's environment has it):
-  ~/.cache/khmer-video-editor/venv/bin/python cover_subs.py <Name>_Khmer.mp4 [--band 820:965] [--out file.mp4]
+Usage (needs Pillow with Raqm for Khmer shaping; setup.sh installs it):
+  sh run.sh tts cover_subs.py <Name>_Khmer.mp4 [--band 820:965] [--out file.mp4]
 
 TikTok dramas often carry English (or Chinese) subtitles burned into the picture. This blurs a
 full-width band where they sit (--band top:bottom in pixels of the video; find it on a frame, e.g.
 ffmpeg -ss 98 -i video.mp4 -frames:v 1 -update 1 -vf "crop=iw:300:0:780,drawgrid=w=iw:h=20:c=red@0.4" band.png),
 darkens it a little, and draws each line of <Name>_Khmer.srt centred in it: Kantumruy Pro, white
-with a black outline, at most two lines. Writes <Name>_Khmer_sub.mp4 (or --out): video re-encoded
-with the Mac's HEVC encoder, the Khmer audio copied.
+with a black outline, at most two lines (font: KHMER_DUB_FONT, else SKILL_DIR/fonts/KantumruyPro.ttf
+from setup.sh). Writes <Name>_Khmer_sub.mp4 (or --out): video re-encoded to HEVC (the Mac's hardware
+encoder, or x265 elsewhere), the Khmer audio copied.
 """
 import argparse
+import os
+import platform
 import re
 import subprocess
 import tempfile
@@ -18,7 +21,9 @@ from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-FONT = Path.home() / ".claude/skills/kattor/assets/fonts/KantumruyPro.ttf"
+FONT = Path(os.environ.get("KHMER_DUB_FONT") or Path(__file__).resolve().parent.parent / "fonts/KantumruyPro.ttf")
+HEVC = (["-c:v", "hevc_videotoolbox", "-b:v", "1600k"] if platform.system() == "Darwin"
+        else ["-c:v", "libx265", "-crf", "26", "-preset", "faster", "-x265-params", "log-level=error"])
 
 
 def srt_cues(path: Path) -> list[tuple[float, float, str]]:
@@ -114,7 +119,7 @@ def main() -> None:
         subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", str(a.video),
                         "-f", "concat", "-safe", "0", "-i", str(tmp / "cards.txt"),
                         "-filter_complex", band, "-map", "[out]", "-map", "0:a",
-                        "-c:v", "hevc_videotoolbox", "-b:v", "1600k", "-tag:v", "hvc1", "-c:a", "copy",
+                        *HEVC, "-tag:v", "hvc1", "-c:a", "copy",
                         "-movflags", "+faststart", "-shortest", str(out)], check=True)
     print(f"wrote {out} ({len(cues)} subtitles, band {top}-{bottom})")
 
