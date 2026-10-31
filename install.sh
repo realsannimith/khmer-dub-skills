@@ -1,9 +1,9 @@
 #!/bin/sh
 # Install (or update) the khmer-dub skill in one command, for one or more coding agents:
 #
-#   curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh                    # Claude Code
-#   curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- codex       # Codex
-#   curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- claude codex
+#   curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh                    # Claude Code
+#   curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- codex       # Codex
+#   curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- claude codex
 #
 # Agents and the skills folder each one reads:
 #   claude                    ~/.claude/skills
@@ -18,7 +18,7 @@
 # Then scripts/setup.sh runs (edge-tts, Pillow and the Khmer font; no AI model).
 # KHMER_DUB_DIR=<folder> installs the checkout there instead, for a single agent.
 set -e
-REPO="https://github.com/realsannimith/khmer-dub-skill.git"
+REPO="https://github.com/realsannimith/khmer-dub-skills.git"
 [ $# -gt 0 ] || set -- claude
 
 skills_dir() {

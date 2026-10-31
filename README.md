@@ -1,6 +1,6 @@
-# khmer-dub skill
+# khmer-dub-skills
 
-A Claude Code skill that dubs short dramas, movie series and clips into Khmer (ខ្មែរ) with free Microsoft Edge TTS, and
+The `khmer-dub` skill for Claude Code, Codex and other coding agents. It dubs short dramas, movie series and clips into Khmer (ខ្មែរ) with free Microsoft Edge TTS, and
 makes Khmer subtitles from Khmer speech.
 
 What it does:
@@ -23,55 +23,55 @@ Copy the line for the agent you use and paste it into your terminal.
 **Claude Code**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh
 ```
 
 **Codex**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- codex
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- codex
 ```
 
 **Cursor**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- cursor
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- cursor
 ```
 
 **Gemini CLI**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- gemini
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- gemini
 ```
 
 **GitHub Copilot**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- copilot
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- copilot
 ```
 
 **OpenCode**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- opencode
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- opencode
 ```
 
 **Windsurf**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- windsurf
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- windsurf
 ```
 
 **Cline, Warp, Zed and other agents that read `~/.agents/skills`**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- agents
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- agents
 ```
 
 **Claude Code and Codex together**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh -s -- claude codex
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skills/main/install.sh | sh -s -- claude codex
 ```
 
 List as many agents as you like. The first one gets the checkout and the others a link to it, so one update covers
@@ -83,7 +83,7 @@ like "dub this video into Khmer: <link or file>".
 With the open [skills CLI](https://github.com/vercel-labs/skills) (Node.js 22.20+) instead:
 
 ```bash
-npx skills add realsannimith/khmer-dub-skill -g -a codex      # or -a claude-code, cursor, gemini-cli, …
+npx skills add realsannimith/khmer-dub-skills -g -a codex      # or -a claude-code, cursor, gemini-cli, …
 ```
 
 It only copies the files; the agent runs `scripts/setup.sh` the first time it uses the skill.
