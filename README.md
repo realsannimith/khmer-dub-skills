@@ -19,9 +19,11 @@ The full instructions Claude follows are in [SKILL.md](SKILL.md).
 ## Install
 
 ```bash
-git clone https://github.com/realsannimith/khmer-dub-skill.git ~/.claude/skills/khmer-dub
-sh ~/.claude/skills/khmer-dub/scripts/setup.sh
+curl -fsSL https://raw.githubusercontent.com/realsannimith/khmer-dub-skill/main/install.sh | sh
 ```
+
+It clones the skill into `~/.claude/skills/khmer-dub` (or updates it) and runs `scripts/setup.sh`. Run it again
+later to update.
 
 Then ask Claude Code something like "dub this episode into Khmer: <link or file>".
 
