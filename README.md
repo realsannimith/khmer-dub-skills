@@ -44,3 +44,7 @@ On another machine, install these yourself and change the paths at the top of th
 
 The two Khmer neural voices: `km-KH-SreymomNeural` (female) and `km-KH-PisethNeural` (male). Characters are told apart by
 pitch, set once per series in `cast.json`.
+
+## License
+
+[MIT](LICENSE)
